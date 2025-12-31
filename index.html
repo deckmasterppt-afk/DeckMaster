@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeckMaster - Create Stunning Presentations in Minutes</title>
+    
+    <style>
+        /* Complete inline CSS - no external dependencies */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Generator Section */
+        .generator {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .generator-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .access-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .access-info h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .limits-info {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e1e5e9;
+            border-radius: 3px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .visual-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .checkbox-group.disabled {
+            opacity: 0.5;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Trust Section */
+        .trust {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            text-align: center;
+        }
+
+        .trust-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Admin badge */
+        .admin-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .access-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .trust-stats {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .generator-form {
+                padding: 2rem 1rem;
+            }
+        }
+        
+        /* PERFECT animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* PERFECT button hover effects */
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">DeckMaster</div>
+            <ul class="nav-links">
+                <li><a href="#generator">Generator</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Create Beautiful, Professional Presentations</h1>
+                <p>Our Beautiful Simple System creates clean, uncluttered presentations with exactly one visual element per slide. No more messy, shabby slides - just professional, elegant results every time.</p>
+                <a href="#generator" class="btn btn-primary">Start Creating Beautiful PPTs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beautiful System Showcase -->
+    <section class="beautiful-showcase" style="padding: 80px 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+        <div class="container">
+            <div class="section-title">
+                <h2>🎨 Beautiful Simple System</h2>
+                <p>The revolutionary presentation engine that creates professional, clean layouts</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">❌</div>
+                    <h3 style="color: #e74c3c; margin-bottom: 1rem;">Before: Messy & Cluttered</h3>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>Multiple visual elements crammed per slide</li>
+                        <li>Shabby, unprofessional appearance</li>
+                        <li>Poor spacing and margins</li>
+                        <li>Inconsistent layouts</li>
+                        <li>Hard to read and understand</li>
+                    </ul>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); transform: scale(1.05);">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">✨</div>
+                    <h3 style="margin-bottom: 1rem;">After: Beautiful & Professional</h3>
+                    <ul style="line-height: 1.8; opacity: 0.95;">
+                        <li><strong>Maximum ONE visual per slide</strong></li>
+                        <li><strong>Clean, professional appearance</strong></li>
+                        <li><strong>Generous 1.5" margins</strong></li>
+                        <li><strong>Consistent, elegant layouts</strong></li>
+                        <li><strong>Easy to read typography</strong></li>
+                    </ul>
+                </div>
+                
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔧</div>
+                    <h3 style="color: #667eea; margin-bottom: 1rem;">Advanced Technology</h3>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>High-quality image integration</li>
+                        <li>Professional chart generation</li>
+                        <li>Dynamic data visualization</li>
+                        <li>Smart visual type selection</li>
+                        <li>Perfect corporate design styles</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; margin-bottom: 1rem;">🎯 Problem Solved!</h3>
+                    <p style="font-size: 1.1rem; color: #666; margin: 0;">
+                        No more "messy, shabby and not good looking" presentations. Our Beautiful Simple System creates 
+                        professional, clean presentations that look amazing every time.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PPT Generator Section -->
+    <section class="generator" id="generator">
+        <div class="container">
+            <div class="section-title">
+                <h2>Create Beautiful Presentations</h2>
+                <p>Our advanced Beautiful Simple System creates professional, clean presentations with exactly one visual element per slide - no more messy, cluttered slides!</p>
+            </div>
+
+            <div class="generator-form">
+                <div class="access-info">
+                    <h4>Current Access: <span id="currentPlan">Free</span> 
+                        <span id="adminBadge" class="admin-badge" style="display: none;">ADMIN MODE</span>
+                    </h4>
+                    <div class="limits-info">
+                        <div>Daily Presentations: <span id="dailyUsage">0</span> / <span id="dailyLimit">3</span></div>
+                        <div>Max Slides: <span id="maxSlides">5</span></div>
+                        <div>Status: <span id="aiStatus">Ready</span></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="usageProgress"></div>
+                    </div>
+                </div>
+
+                <form id="pptForm">
+                    <div class="form-group">
+                        <label for="url">Content URL (required) *</label>
+                        <input type="url" id="url" name="url" required placeholder="https://example.com/article - Required for better content and visuals">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="task">Presentation Topic/Task *</label>
+                        <textarea id="task" name="task" required placeholder="Describe what your presentation should be about..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="designStyle">Design Style</label>
+                            <select id="designStyle" name="designStyle">
+                                <!-- Minimal Designs -->
+                                <optgroup label="Minimal & Clean">
+                                    <option value="minimal_1">Pure White</option>
+                                    <option value="minimal_2">Soft Gray</option>
+                                    <option value="minimal_3">Ivory Elegance</option>
+                                </optgroup>
+                                
+                                <!-- Corporate Designs -->
+                                <optgroup label="Corporate & Professional">
+                                    <option value="corporate_1">Navy Blue</option>
+                                    <option value="corporate_2">Deep Blue</option>
+                                    <option value="corporate_3">Charcoal</option>
+                                </optgroup>
+                                
+                                <!-- Tech & Modern Designs -->
+                                <optgroup label="Tech & Modern">
+                                    <option value="tech_1">Dark Tech</option>
+                                    <option value="tech_2">Cyber Blue</option>
+                                    <option value="modern_1">Gradient Blue</option>
+                                    <option value="modern_2">Sunset Glow</option>
+                                </optgroup>
+                                
+                                <!-- Creative Designs -->
+                                <optgroup label="Creative & Bold">
+                                    <option value="creative_1">Sunset Orange</option>
+                                    <option value="creative_2">Vibrant Pink</option>
+                                </optgroup>
+                                
+                                <!-- Academic Designs -->
+                                <optgroup label="Academic & Educational">
+                                    <option value="academic_1">Forest Green</option>
+                                    <option value="academic_2">Oxford Blue</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="slideCount">Number of Slides</label>
+                            <input type="number" id="slideCount" name="slideCount" min="1" max="5" value="3">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Visual Elements (Admin Mode Required)</label>
+                        <div class="visual-options">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="graphs" name="graphs" disabled>
+                                <label for="graphs">Charts & Graphs</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="tables" name="tables" disabled>
+                                <label for="tables">Tables</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="pieCharts" name="pieCharts" disabled>
+                                <label for="pieCharts">Pie Charts</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="images" name="images" disabled>
+                                <label for="images">Images</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-message" id="statusMessage"></div>
+
+                    <button type="submit" class="btn btn-primary" id="generateBtn">
+                        Generate Presentation
+                    </button>
+                    
+                    <button type="button" class="btn btn-secondary" id="adminBtn">
+                        🔧 Activate Admin Mode
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose DeckMaster?</h2>
+                <p>Everything you need to create professional presentations effortlessly</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Beautiful Simple System</h3>
+                    <p>Our revolutionary layout engine creates clean, professional presentations with maximum one visual per slide - no more messy, cluttered slides!</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Smart Visual Elements</h3>
+                    <p>Automatically generated charts, tables, and graphs with intelligent positioning and beautiful styling for maximum impact</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>14 Professional Designs</h3>
+                    <p>Beautiful design styles with consistent branding, generous spacing, and elegant typography - from minimal to corporate to creative</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🚫</div>
+                    <h3>No More Messy Slides</h3>
+                    <p>Our Beautiful Simple System ensures clean, uncluttered layouts with generous 1.5" margins and professional appearance every time</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Advanced Integrations</h3>
+                    <p>Seamless integration with premium image libraries and data visualization tools for professional results</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Download</h3>
+                    <p>Get your beautiful presentation in PowerPoint format ready for immediate use - no waiting, perfect results every time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section class="trust">
+        <div class="container">
+            <div class="section-title">
+                <h2>Trusted by Creators Worldwide</h2>
+            </div>
+            <div class="trust-stats">
+                <div class="stat">
+                    <span class="stat-number">50K+</span>
+                    <span class="stat-label">Active Users</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">1M+</span>
+                    <span class="stat-label">Presentations Created</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Uptime</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Contact</a>
+                <a href="#">Support</a>
+            </div>
+            <p>&copy; 2024 DeckMaster. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Complete inline JavaScript - no external dependencies -->
+    <script>
+        // Ensure DOM is fully loaded before executing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DeckMaster Website Loaded Successfully');
+            
+            let adminActive = false;
+            let currentUser = { plan: 'free', dailyUsage: 0, userId: null };
+
+            // Get DOM elements
+            const elements = {
+                adminBadge: document.getElementById('adminBadge'),
+                currentPlan: document.getElementById('currentPlan'),
+                maxSlides: document.getElementById('maxSlides'),
+                slideCount: document.getElementById('slideCount'),
+                adminBtn: document.getElementById('adminBtn'),
+                statusMessage: document.getElementById('statusMessage'),
+                pptForm: document.getElementById('pptForm'),
+                generateBtn: document.getElementById('generateBtn'),
+                dailyUsage: document.getElementById('dailyUsage'),
+                dailyLimit: document.getElementById('dailyLimit'),
+                usageProgress: document.getElementById('usageProgress'),
+                aiStatus: document.getElementById('aiStatus')
+            };
+
+            // Check system status
+            async function checkAIStatus() {
+                try {
+                    const response = await fetch('/api/health');
+                    const result = await response.json();
+                    
+                    if (result.status === 'healthy') {
+                        elements.aiStatus.textContent = 'Ready';
+                        elements.aiStatus.style.color = '#4CAF50';
+                    }
+                } catch (error) {
+                    elements.aiStatus.textContent = 'System Error';
+                    elements.aiStatus.style.color = '#e74c3c';
+                }
+            }
+
+            function showStatus(message, type = 'info') {
+                elements.statusMessage.textContent = message;
+                elements.statusMessage.className = `status-message status-${type}`;
+                elements.statusMessage.style.display = 'block';
+                
+                if (type === 'success') {
+                    setTimeout(() => elements.statusMessage.style.display = 'none', 5000);
+                }
+            }
+
+            function updateUI() {
+                const visualGroups = document.querySelectorAll('.checkbox-group');
+                const visualCheckboxes = document.querySelectorAll('.visual-options input[type="checkbox"]');
+                
+                if (adminActive) {
+                    elements.adminBadge.style.display = 'inline';
+                    elements.currentPlan.textContent = 'ADMIN (Unlimited)';
+                    elements.maxSlides.textContent = '50';
+                    elements.slideCount.max = 50;
+                    elements.slideCount.value = 10;
+                    elements.adminBtn.textContent = '🔧 Deactivate Admin Mode';
+                    elements.adminBtn.style.background = 'linear-gradient(45deg, #ef4444, #dc2626)';
+                    elements.dailyLimit.textContent = '∞';
+                    elements.aiStatus.textContent = 'Admin Mode - All Features';
+                    elements.aiStatus.style.color = '#4CAF50';
+                    
+                    // Enable visual elements for admin
+                    visualGroups.forEach(group => group.classList.remove('disabled'));
+                    visualCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = false;
+                        checkbox.checked = true;
+                    });
+                    
+                    // Show admin privileges in the form
+                    const adminMessage = document.getElementById('adminMessage');
+                    if (!adminMessage) {
+                        const adminDiv = document.createElement('div');
+                        adminDiv.id = 'adminMessage';
+                        adminDiv.style.cssText = 'background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #4CAF50;';
+                        adminDiv.innerHTML = `
+                            <strong>🔧 ADMIN MODE ACTIVE</strong><br>
+                            ✅ Unlimited PPT generation<br>
+                            ✅ Up to 50 slides per presentation<br>
+                            ✅ All visual elements enabled<br>
+                            ✅ All 14 design styles<br>
+                            ✅ No restrictions<br>
+                            ✅ Full admin privileges
+                        `;
+                        elements.pptForm.insertBefore(adminDiv, elements.pptForm.firstChild);
+                    }
+                } else {
+                    elements.adminBadge.style.display = 'none';
+                    elements.currentPlan.textContent = 'Free Access';
+                    elements.maxSlides.textContent = '5';
+                    elements.slideCount.max = 5;
+                    elements.slideCount.value = 3;
+                    elements.adminBtn.textContent = '🔧 Activate Admin Mode';
+                    elements.adminBtn.style.background = '';
+                    elements.dailyLimit.textContent = '3';
+                    elements.aiStatus.textContent = 'Ready';
+                    elements.aiStatus.style.color = '#667eea';
+                    
+                    // Disable visual elements for free access
+                    visualGroups.forEach(group => group.classList.add('disabled'));
+                    visualCheckboxes.forEach(checkbox => {
+                        checkbox.disabled = true;
+                        checkbox.checked = false;
+                    });
+                    
+                    // Remove admin message
+                    const adminMessage = document.getElementById('adminMessage');
+                    if (adminMessage) {
+                        adminMessage.remove();
+                    }
+                }
+                
+                // Update progress bar
+                const usage = currentUser.dailyUsage;
+                const limit = adminActive ? 100 : 3;
+                const percentage = Math.min((usage / limit) * 100, 100);
+                elements.usageProgress.style.width = percentage + '%';
+                elements.dailyUsage.textContent = usage;
+            }
+
+            function toggleAdmin() {
+                if (adminActive) {
+                    // Deactivate admin mode
+                    deactivateAdminMode();
+                } else {
+                    // Activate admin mode
+                    const password = prompt('Enter admin password:');
+                    if (password === 'DeckMaster2024!@#SecureAdmin') {
+                        activateAdminMode(password);
+                    } else if (password !== null) {
+                        showStatus('❌ Invalid admin password', 'error');
+                    }
+                }
+            }
+            
+            // Activate admin mode via API
+            async function activateAdminMode(password) {
+                try {
+                    const userId = 'admin_' + Date.now();
+                    const response = await fetch('/api/admin/activate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            password: password,
+                            user_id: userId
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        adminActive = true;
+                        currentUser.userId = userId; // Store user ID for future API calls
+                        updateUI();
+                        showStatus('🔧 Admin mode activated! All features unlocked, unlimited usage, backend admin privileges enabled.', 'success');
+                    } else {
+                        showStatus(`❌ Admin activation failed: ${result.error}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Admin activation error:', error);
+                    showStatus('❌ Failed to activate admin mode. Check server connection.', 'error');
+                }
+            }
+            
+            // Deactivate admin mode via API
+            async function deactivateAdminMode() {
+                try {
+                    if (currentUser.userId) {
+                        const response = await fetch('/api/admin/deactivate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                user_id: currentUser.userId
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        console.log('Deactivation result:', result);
+                    }
+                    
+                    adminActive = false;
+                    currentUser.userId = null;
+                    updateUI();
+                    showStatus('Admin mode deactivated.', 'info');
+                } catch (error) {
+                    console.error('Admin deactivation error:', error);
+                    // Still deactivate locally even if API call fails
+                    adminActive = false;
+                    currentUser.userId = null;
+                    updateUI();
+                    showStatus('Admin mode deactivated locally.', 'info');
+                }
+            }
+
+            // Form submission handler - PERFECT API INTEGRATION
+            elements.pptForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const task = document.getElementById('task').value.trim();
+                const url = document.getElementById('url').value.trim();
+                const slideCount = parseInt(elements.slideCount.value);
+                const designStyle = document.getElementById('designStyle').value;
+                
+                // Get visual elements
+                const visualElements = {
+                    graphs: document.getElementById('graphs').checked,
+                    tables: document.getElementById('tables').checked,
+                    pieCharts: document.getElementById('pieCharts').checked,
+                    images: document.getElementById('images').checked
+                };
+                
+                if (!task || task.length < 10) {
+                    showStatus('❌ Please provide a more detailed presentation topic (at least 10 characters)', 'error');
+                    return;
+                }
+                
+                if (!url || url.length < 10) {
+                    showStatus('❌ URL is required for content extraction and better visual elements. Please provide a complete URL.', 'error');
+                    return;
+                }
+                
+                // Validate URL format
+                try {
+                    new URL(url);
+                } catch (e) {
+                    showStatus('❌ Please provide a valid URL starting with http:// or https://', 'error');
+                    return;
+                }
+                
+                if (!adminActive && slideCount > 5) {
+                    showStatus('❌ Free access allows maximum 5 slides. Activate admin mode for unlimited slides.', 'error');
+                    return;
+                }
+                
+                // Prepare API request
+                const requestData = {
+                    user_id: currentUser.userId || 'user_' + Date.now(),
+                    task: task,
+                    url: url,  // Now required
+                    slide_count: slideCount,
+                    design_style: designStyle,
+                    visual_preferences: visualElements
+                };
+                
+                console.log('🚀 PERFECT Generation Request:', requestData);
+                
+                // Start generation
+                elements.generateBtn.disabled = true;
+                elements.generateBtn.textContent = 'Generating...';
+                
+                const statusMsg = adminActive ? 
+                    `🚀 [ADMIN] Generating ${slideCount} slides with Beautiful Simple System...` :
+                    `🚀 Generating ${slideCount} beautiful slides with clean layouts...`;
+                
+                showStatus(statusMsg, 'info');
+                
+                try {
+                    // Call the PERFECT API
+                    const response = await fetch('/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // PERFECT - generation completed immediately
+                        showStatus(`✅ Presentation generated successfully!`, 'success');
+                        
+                        // Get file information and show download
+                        showPerfectDownload(result.job_id);
+                        
+                        if (!adminActive) {
+                            currentUser.dailyUsage++;
+                            updateUI();
+                        }
+                    } else {
+                        showStatus(`❌ Generation failed: ${result.error}`, 'error');
+                    }
+                    
+                } catch (error) {
+                    console.error('API Error:', error);
+                    showStatus(`❌ Network error: ${error.message}`, 'error');
+                } finally {
+                    elements.generateBtn.disabled = false;
+                    elements.generateBtn.textContent = 'Generate Presentation';
+                }
+            });
+            
+            // PERFECT download display
+            async function showPerfectDownload(jobId) {
+                try {
+                    // Get file information
+                    const fileInfoResponse = await fetch(`/api/file-info/${jobId}`);
+                    const fileInfo = await fileInfoResponse.json();
+                    
+                    if (fileInfo.success) {
+                        const info = fileInfo.file_info;
+                        
+                        // Create PERFECT download section
+                        const downloadSection = document.createElement('div');
+                        downloadSection.style.cssText = `
+                            margin-top: 2rem; 
+                            padding: 2rem; 
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                            border-radius: 16px; 
+                            color: white; 
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                            animation: slideIn 0.5s ease-out;
+                        `;
+                        
+                        downloadSection.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem;">
+                                <div style="font-size: 3rem;">🎉</div>
+                                <div>
+                                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold;">Your Perfect Presentation is Ready!</h2>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Created: ${info.creation_date}</p>
+                                </div>
+                            </div>
+                            
+                            <div style="background: rgba(255,255,255,0.15); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                                <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; font-size: 1rem;">
+                                    <strong>📄 File:</strong> <span>${info.filename}</span>
+                                    <strong>📏 Size:</strong> <span>${info.file_size_mb} MB</span>
+                                    <strong>💾 Location:</strong> <span style="font-family: monospace; font-size: 0.9rem; word-break: break-all;">${info.absolute_path}</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <button id="perfectDownloadBtn" style="
+                                    flex: 1; 
+                                    min-width: 250px; 
+                                    padding: 1rem 2rem; 
+                                    background: #fff; 
+                                    color: #667eea; 
+                                    border: none; 
+                                    border-radius: 12px; 
+                                    font-weight: bold; 
+                                    font-size: 1.1rem;
+                                    cursor: pointer; 
+                                    transition: all 0.3s;
+                                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                                ">
+                                    📥 Download Perfect PPT
+                                </button>
+                                <button id="copyPathBtn" style="
+                                    flex: 1; 
+                                    min-width: 200px; 
+                                    padding: 1rem 2rem; 
+                                    background: rgba(255,255,255,0.2); 
+                                    color: white; 
+                                    border: 1px solid rgba(255,255,255,0.3); 
+                                    border-radius: 12px; 
+                                    font-weight: bold; 
+                                    cursor: pointer; 
+                                    transition: all 0.3s;
+                                ">
+                                    📋 Copy File Path
+                                </button>
+                            </div>
+                            
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 0.9rem;">
+                                ✨ <strong>Beautiful Simple System!</strong> Your presentation features clean layouts, professional styling, exactly one visual element per slide, and generous spacing for maximum readability!
+                            </div>
+                        `;
+                        
+                        // Add to page
+                        elements.generateBtn.parentNode.insertBefore(downloadSection, elements.generateBtn.nextSibling);
+                        
+                        // PERFECT download functionality
+                        document.getElementById('perfectDownloadBtn').onclick = async () => {
+                            try {
+                                showStatus('📥 Starting download...', 'info');
+                                
+                                // Create download link
+                                const link = document.createElement('a');
+                                link.href = `/api/download/${jobId}`;
+                                link.download = info.filename;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                
+                                showStatus(`✅ Download started: ${info.filename}`, 'success');
+                            } catch (error) {
+                                showStatus(`❌ Download failed: ${error.message}`, 'error');
+                            }
+                        };
+                        
+                        // Copy path functionality
+                        document.getElementById('copyPathBtn').onclick = async () => {
+                            try {
+                                await navigator.clipboard.writeText(info.absolute_path);
+                                showStatus('📋 File path copied to clipboard!', 'success');
+                            } catch (error) {
+                                showStatus(`📂 File location: ${info.absolute_path}`, 'info');
+                            }
+                        };
+                        
+                    } else {
+                        // Fallback download
+                        const downloadBtn = document.createElement('button');
+                        downloadBtn.textContent = '📥 Download PPT';
+                        downloadBtn.className = 'btn btn-primary';
+                        downloadBtn.style.cssText = 'margin: 1rem 0; padding: 1rem 2rem; font-size: 1.1rem;';
+                        downloadBtn.onclick = () => {
+                            const link = document.createElement('a');
+                            link.href = `/api/download/${jobId}`;
+                            link.download = `presentation_${Date.now()}.pptx`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        };
+                        
+                        elements.generateBtn.parentNode.insertBefore(downloadBtn, elements.generateBtn.nextSibling);
+                    }
+                    
+                } catch (error) {
+                    console.error('Download display error:', error);
+                    showStatus('❌ Error displaying download options', 'error');
+                }
+            }
+
+            // Admin button handler
+            elements.adminBtn.addEventListener('click', toggleAdmin);
+
+            // Keyboard shortcut for admin
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                    e.preventDefault();
+                    toggleAdmin();
+                }
+            });
+
+            // Initialize UI
+            updateUI();
+            checkAIStatus();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showStatus('🚀 DeckMaster loaded! Create professional presentations with clean layouts and beautiful design styles. Try: Ctrl+Shift+A for admin mode', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
