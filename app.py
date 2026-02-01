@@ -8,6 +8,7 @@ from config import DEBUG, HOST, PORT, MAX_CONTENT_LENGTH, OUTPUT_FOLDER, CORS_OR
 from presentation_service import presentation_service
 from user_manager import user_manager
 from job_store import get_job
+from feedback_store import save_feedback, get_all_feedback, get_feedback_count
 import time
 
 app = Flask(__name__)
@@ -181,6 +182,74 @@ def get_designs():
 def get_plans():
     """Get subscription plans"""
     return jsonify({'plans': SUBSCRIPTION_PLANS})
+
+@app.route('/api/premium-feedback', methods=['POST'])
+def submit_premium_feedback():
+    """Submit feedback for premium features"""
+    try:
+        data = request.get_json()
+        
+        if not data or not data.get('feedback'):
+            return jsonify({
+                'success': False,
+                'error': 'Feedback text is required'
+            }), 400
+        
+        feedback_text = data.get('feedback', '').strip()
+        email = data.get('email', '').strip() if data.get('email') else None
+        user_id = data.get('user_id')
+        ip_address = request.remote_addr
+        
+        if len(feedback_text) < 10:
+            return jsonify({
+                'success': False,
+                'error': 'Please provide more detailed feedback (at least 10 characters)'
+            }), 400
+        
+        # Save feedback to database
+        feedback_id = save_feedback(feedback_text, email, user_id, ip_address)
+        
+        if feedback_id:
+            return jsonify({
+                'success': True,
+                'message': 'Thank you for your feedback! We\'ll notify you when premium features launch.',
+                'feedback_id': feedback_id
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to save feedback. Please try again.'
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': 'An error occurred while saving your feedback'
+        }), 500
+
+@app.route('/api/admin/feedback')
+def get_admin_feedback():
+    """Get all feedback (admin only)"""
+    try:
+        # Simple admin check - you can enhance this
+        admin_password = request.headers.get('X-Admin-Password')
+        if admin_password != 'DeckMaster2024!@#SecureAdmin':
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        feedback_list = get_all_feedback()
+        feedback_count = get_feedback_count()
+        
+        return jsonify({
+            'success': True,
+            'feedback': feedback_list,
+            'total_count': feedback_count
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': 'Failed to retrieve feedback'
+        }), 500
 
 if __name__ == '__main__':
     print("=" * 60)

@@ -562,8 +562,8 @@
                         <span id="adminBadge" class="admin-badge" style="display: none;">ADMIN MODE</span>
                     </h4>
                     <div class="limits-info">
-                        <div>Daily Presentations: <span id="dailyUsage">0</span> / <span id="dailyLimit">3</span></div>
-                        <div>Max Slides: <span id="maxSlides">5</span></div>
+                        <div>Daily Presentations: <span id="dailyUsage">0</span> / <span id="dailyLimit">5</span></div>
+                        <div>Max Slides: <span id="maxSlides">10</span></div>
                         <div>Status: <span id="aiStatus">Ready</span></div>
                     </div>
                     <div class="progress-bar">
@@ -624,7 +624,7 @@
 
                         <div class="form-group">
                             <label for="slideCount">Number of Slides</label>
-                            <input type="number" id="slideCount" name="slideCount" min="1" max="5" value="3">
+                            <input type="number" id="slideCount" name="slideCount" min="1" max="10" value="3">
                         </div>
                     </div>
 
@@ -658,6 +658,10 @@
                     
                     <button type="button" class="btn btn-secondary" id="adminBtn">
                         🔧 Activate Admin Mode
+                    </button>
+                    
+                    <button type="button" class="btn premium-trigger" onclick="showPremiumModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-left: 10px;">
+                        ⭐ Premium Plans
                     </button>
                 </form>
             </div>
@@ -843,12 +847,12 @@
                 } else {
                     elements.adminBadge.style.display = 'none';
                     elements.currentPlan.textContent = 'Free Access';
-                    elements.maxSlides.textContent = '5';
-                    elements.slideCount.max = 5;
+                    elements.maxSlides.textContent = '10';
+                    elements.slideCount.max = 10;
                     elements.slideCount.value = 3;
                     elements.adminBtn.textContent = '🔧 Activate Admin Mode';
                     elements.adminBtn.style.background = '';
-                    elements.dailyLimit.textContent = '3';
+                    elements.dailyLimit.textContent = '5';
                     elements.aiStatus.textContent = 'Ready';
                     elements.aiStatus.style.color = '#667eea';
                     
@@ -987,8 +991,8 @@
                     return;
                 }
                 
-                if (!adminActive && slideCount > 5) {
-                    showStatus('❌ Free access allows maximum 5 slides. Activate admin mode for unlimited slides.', 'error');
+                if (!adminActive && slideCount > 10) {
+                    showStatus('❌ Free access allows maximum 10 slides. Activate admin mode for unlimited slides.', 'error');
                     return;
                 }
                 
@@ -1206,3 +1210,295 @@
     </script>
 </body>
 </html>
+
+<!-- Premium Feedback Modal -->
+<div id="premiumModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🚀 Premium Plans Launching Soon!</h2>
+            <button class="modal-close" onclick="closePremiumModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <p><strong>DeckMaster is currently in early access.</strong> Paid features will be introduced based on real user demand.</p>
+            
+            <div class="feedback-section">
+                <label for="premiumFeedback">What would make DeckMaster worth paying for you?</label>
+                <p class="feedback-examples">(Example: unlimited PPTs, faster generation, more templates, no watermark)</p>
+                <textarea 
+                    id="premiumFeedback" 
+                    placeholder="Tell us what premium features you'd love to see..."
+                    rows="4"
+                    maxlength="500"
+                ></textarea>
+            </div>
+            
+            <div class="email-section">
+                <label for="premiumEmail">Email (optional, to notify you):</label>
+                <input 
+                    type="email" 
+                    id="premiumEmail" 
+                    placeholder="your@email.com"
+                />
+            </div>
+            
+            <button id="submitFeedbackBtn" class="premium-submit-btn" onclick="submitPremiumFeedback()">
+                📧 Notify me when Premium launches
+            </button>
+            
+            <p class="early-access-note">
+                <small>Early users will get priority access and discounted pricing.</small>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Premium Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #667eea;
+    font-size: 1.4rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px 25px 25px;
+}
+
+.modal-body p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.feedback-section {
+    margin-bottom: 20px;
+}
+
+.feedback-section label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.feedback-examples {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px !important;
+    font-style: italic;
+}
+
+.feedback-section textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 100px;
+    box-sizing: border-box;
+}
+
+.feedback-section textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.email-section {
+    margin-bottom: 25px;
+}
+
+.email-section label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.email-section input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.email-section input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.premium-submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin-bottom: 15px;
+}
+
+.premium-submit-btn:hover {
+    transform: translateY(-2px);
+}
+
+.premium-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.early-access-note {
+    text-align: center;
+    color: #666;
+    margin: 0;
+}
+
+.early-access-note small {
+    font-size: 0.85rem;
+}
+
+/* Premium trigger button */
+.premium-trigger {
+    cursor: pointer;
+    color: #667eea;
+    text-decoration: underline;
+}
+
+.premium-trigger:hover {
+    color: #764ba2;
+}
+</style>
+
+<script>
+// Premium Modal Functions
+function showPremiumModal() {
+    document.getElementById('premiumModal').style.display = 'flex';
+}
+
+function closePremiumModal() {
+    document.getElementById('premiumModal').style.display = 'none';
+}
+
+function submitPremiumFeedback() {
+    const feedback = document.getElementById('premiumFeedback').value.trim();
+    const email = document.getElementById('premiumEmail').value.trim();
+    
+    if (!feedback) {
+        alert('Please tell us what would make DeckMaster worth paying for!');
+        return;
+    }
+    
+    if (feedback.length < 10) {
+        alert('Please provide more detailed feedback (at least 10 characters)');
+        return;
+    }
+    
+    // Show loading
+    const submitBtn = document.getElementById('submitFeedbackBtn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+    
+    // Submit feedback
+    fetch('/api/premium-feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            feedback: feedback,
+            email: email || null,
+            user_id: currentUser ? currentUser.userId : null
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Thank you for your feedback! We will notify you when premium features launch.');
+            closePremiumModal();
+            // Clear form
+            document.getElementById('premiumFeedback').value = '';
+            document.getElementById('premiumEmail').value = '';
+        } else {
+            alert('Error: ' + (data.error || 'Failed to submit feedback'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to submit feedback. Please try again.');
+    })
+    .finally(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Add click handlers for premium/subscription triggers
+document.addEventListener('DOMContentLoaded', function() {
+    // Create a premium trigger button (you can add this anywhere in your UI)
+    const premiumTriggers = document.querySelectorAll('.premium-trigger, [data-premium]');
+    premiumTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPremiumModal();
+        });
+    });
+});
+</script>

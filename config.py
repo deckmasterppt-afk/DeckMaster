@@ -34,9 +34,9 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 SUBSCRIPTION_PLANS = {
     'free': {
         'name': 'Free',
-        'daily_limit': 3,
-        'total_limit': 3,  # Lifetime limit for free tier
-        'max_slides': 5,
+        'daily_limit': 5,  # Max 5 PPTs per day
+        'total_limit': 5,  # Lifetime limit for free tier
+        'max_slides': 10,  # Max 10 slides per PPT
         'has_ads': True,
         'visual_elements': False,
         'price': 0,
