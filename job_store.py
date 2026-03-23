@@ -13,18 +13,24 @@ job_stats = {
     'active_jobs': 0
 }
 
-def create_job(job_id: str, job_data: Dict[str, Any]) -> None:
-    """Create a new job"""
+def create_job(user_id: str, job_data: Dict[str, Any]) -> str:
+    """Create a new job and return job_id"""
+    import uuid
+    job_id = str(uuid.uuid4())
+    
     jobs[job_id] = {
         'id': job_id,
         'status': 'pending',
         'created_at': time.time(),
         'data': job_data,
         'result': None,
-        'error': None
+        'error': None,
+        'user_id': user_id
     }
     job_stats['total_jobs'] += 1
     job_stats['active_jobs'] += 1
+    
+    return job_id
 
 def update_job_status(job_id: str, status: str, result: Any = None, error: str = None) -> None:
     """Update job status"""
