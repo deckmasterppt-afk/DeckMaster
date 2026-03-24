@@ -86,7 +86,13 @@ class DeckMasterApp {
                 // Trigger download
                 if (result.downloadUrl && result.downloadUrl !== '#') {
                     const fullUrl = window.location.origin + result.downloadUrl;
-                    this.apiClient.downloadFile(fullUrl, result.filename);
+                    // Use direct anchor click for reliable download
+                    const a = document.createElement('a');
+                    a.href = fullUrl;
+                    a.download = result.filename || 'presentation.pptx';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
                 }
             } else {
                 this.uiManager.showError('❌ Generation failed. Please try again.');
@@ -130,7 +136,6 @@ class DeckMasterApp {
         };
         
         // Validate slide count - skip validation in admin mode
-        const userId = this.planManager.getUserId();
         const isAdmin = this.planManager.isAdminUser(userId);
         
         if (!isAdmin) {
