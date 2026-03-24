@@ -22,10 +22,10 @@ def call_llm(prompt: str) -> str:
         }
     }
 
-    timeout = 120
+    timeout = 30  # Reduced timeout - fall to demo mode faster
     
     try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=timeout)
+        response = requests.post(OLLAMA_URL, json=payload, timeout=(5, 30))  # (connect, read)
         response.raise_for_status()
 
         data = response.json()

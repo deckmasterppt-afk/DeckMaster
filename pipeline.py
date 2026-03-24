@@ -111,7 +111,7 @@ def run_pipeline(url: str, task: str, design_style: str, visual_preferences: dic
         print(f"[DESIGN] Requested design style: {design_style}")
         print(f"[DESIGN] Visual preferences: {visual_preferences}")
 
-        output_path = os.path.join(OUTPUT_DIR, "generated_ppt.pptx")
+        output_path = os.path.join(OUTPUT_DIR, f"presentation_{int(__import__('time').time())}.pptx")
         
         # Generate PPT with BEAUTIFUL SYSTEM
         try:

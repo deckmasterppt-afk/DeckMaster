@@ -1,5 +1,5 @@
 # slide_mapper.py
-# Simple slide layout mapping for DeckMaster
+# Slide layout mapping for DeckMaster
 
 def get_slide_layout(slide_type):
     """Get layout information for a slide type"""
@@ -10,21 +10,24 @@ def get_slide_layout(slide_type):
             "type": "title",
             "has_title": True,
             "has_content": True,
-            "max_content_blocks": 1
+            "max_content_blocks": 1,
+            "fields": ["title", "subtitle"]
         },
         "content": {
             "layout_index": 1,
-            "type": "content", 
+            "type": "content",
             "has_title": True,
             "has_content": True,
-            "max_content_blocks": 3
+            "max_content_blocks": 3,
+            "fields": ["title", "bullets"]
         },
         "summary": {
             "layout_index": 1,
             "type": "content",
-            "has_title": True, 
+            "has_title": True,
             "has_content": True,
-            "max_content_blocks": 2
+            "max_content_blocks": 2,
+            "fields": ["title", "bullets"]
         }
     }
     
