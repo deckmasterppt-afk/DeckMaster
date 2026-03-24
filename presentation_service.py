@@ -130,9 +130,9 @@ class PresentationService:
         try:
             update_state(job_id, "PROCESSING")
             
-            # Generate unique filename
+            # Generate clean unique filename
             timestamp = int(time.time())
-            filename = f"presentation_{user_id}_{timestamp}.pptx"
+            filename = f"DeckMaster_{timestamp}.pptx"
             output_path = os.path.abspath(os.path.join(OUTPUT_FOLDER, filename))
             
             # Ensure output directory exists
