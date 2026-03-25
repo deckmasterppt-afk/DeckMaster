@@ -73,10 +73,8 @@ def generate_ppt(slides: list, output_path: str, design_style: str = "minimal_1"
         prs.slide_height = Inches(7.5)    # Perfect widescreen height
 
         # Get design style configuration with fallback protection
-        style_config = get_design_style(design_style)
-        if not style_config:
-            print(f"[WARNING] Invalid design style '{design_style}', using minimal_1")
-            style_config = get_design_style("minimal_1")
+        from design_engine import get_design
+        style_config = get_design(design_style)
 
         print(f"[PERFECT] Creating {slide_count} slides with {design_style} design...")
         
@@ -115,8 +113,9 @@ def generate_ppt(slides: list, output_path: str, design_style: str = "minimal_1"
             # Create slide with proper layout
             slide = prs.slides.add_slide(prs.slide_layouts[SLIDE_LAYOUTS[slide_type]])
 
-            # Apply perfect background design
-            _apply_perfect_background(slide, style_config)
+            # Apply full design (background + decorative elements)
+            from design_engine import apply_design
+            apply_design(slide, prs, design_style)
 
             # BEAUTIFUL SIMPLE SYSTEM - handles all content and visual placement
             print(f"[BEAUTIFUL] Creating beautiful, uncluttered layout for slide {slide_index + 1}")

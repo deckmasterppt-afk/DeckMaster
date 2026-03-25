@@ -74,65 +74,32 @@ SUBSCRIPTION_PLANS = {
     }
 }
 
-# Design Styles Configuration (from your design_styles.py)
+# Design Styles Configuration
 AVAILABLE_DESIGN_STYLES = {
-    # Minimal Designs
-    'minimal_1': 'Pure White',
-    'minimal_2': 'Soft Gray', 
-    'minimal_3': 'Ivory Elegance',
-    'minimal_4': 'Light Blue',
-    'minimal_5': 'Pale Green',
-    'minimal_6': 'Warm Beige',
-    
-    # Corporate Designs
-    'corporate_1': 'Navy Blue',
-    'corporate_2': 'Deep Blue',
-    'corporate_3': 'Charcoal',
-    'corporate_4': 'Royal Blue',
-    'corporate_5': 'Slate Gray',
-    'corporate_6': 'Business Green',
-    'corporate_7': 'Professional Purple',
-    'corporate_8': 'Executive Navy',
-    
-    # Creative Designs
-    'creative_1': 'Sunset Orange',
-    'creative_2': 'Vibrant Pink',
-    'creative_3': 'Electric Blue',
-    'creative_4': 'Lime Green',
-    'creative_5': 'Purple Dream',
-    'creative_6': 'Coral Red',
-    'creative_7': 'Turquoise',
-    'creative_8': 'Golden Yellow',
-    
-    # Academic Designs
-    'academic_1': 'Forest Green',
-    'academic_2': 'Oxford Blue',
-    'academic_3': 'Burgundy',
-    'academic_4': 'Teal Scholar',
-    'academic_5': 'Maroon',
-    'academic_6': 'Sage Green',
-    'academic_7': 'Royal Purple',
-    'academic_8': 'Navy Scholar',
-    
-    # Tech Designs
-    'tech_1': 'Dark Tech',
-    'tech_2': 'Cyber Blue',
-    'tech_3': 'Matrix Green',
-    'tech_4': 'Neon Purple',
-    'tech_5': 'Dark Mode',
-    'tech_6': 'Electric Blue',
-    'tech_7': 'Holographic',
-    'tech_8': 'Digital Orange',
-    
-    # Modern Designs
-    'modern_1': 'Gradient Blue',
-    'modern_2': 'Sunset Glow',
-    'modern_3': 'Ocean Wave',
-    'modern_4': 'Forest Mist',
-    'modern_5': 'Purple Haze',
-    'modern_6': 'Golden Hour',
-    'modern_7': 'Arctic Blue',
-    'modern_8': 'Coral Reef'
+    # Minimal
+    'minimal_1': 'Clean White',
+    'minimal_2': 'Warm Paper',
+    'minimal_3': 'Ink Black',
+    # Corporate
+    'corporate_1': 'Executive Navy',
+    'corporate_2': 'Steel Gray',
+    'corporate_3': 'Forest Executive',
+    # Tech
+    'tech_1': 'Cyber Dark',
+    'tech_2': 'Matrix Green',
+    'tech_3': 'Purple Neon',
+    # Creative
+    'creative_1': 'Coral Burst',
+    'creative_2': 'Ocean Depth',
+    'creative_3': 'Mango Splash',
+    # Academic
+    'academic_1': 'Scholar Green',
+    'academic_2': 'Oxford Classic',
+    'academic_3': 'Burgundy Scholar',
+    # Modern
+    'modern_1': 'Violet Gradient',
+    'modern_2': 'Rose Gold',
+    'modern_3': 'Midnight Teal',
 }
 
 # API Configuration

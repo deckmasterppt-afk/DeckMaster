@@ -12,6 +12,20 @@ OUTPUT_DIR = "outputs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
+def _repair_json(raw: str) -> str:
+    """Try to repair truncated or malformed JSON from LLM."""
+    import re
+    # Remove trailing incomplete entries
+    raw = raw.strip()
+    # Find last complete slide object
+    last_complete = raw.rfind('},')
+    if last_complete > 0:
+        raw = raw[:last_complete + 1]
+        # Close the slides array and root object
+        raw = raw.rstrip(',') + '\n  ]\n}'
+    return raw
+
+
 def run_pipeline(url: str, task: str, design_style: str, visual_preferences: dict, slide_count: int = 10) -> str:
     """
     Run the complete PPT generation pipeline with robust error handling and memory management
@@ -62,7 +76,13 @@ def run_pipeline(url: str, task: str, design_style: str, visual_preferences: dic
         except json.JSONDecodeError as e:
             print(f"\n[ERROR] JSON Parse Error: {e}")
             print(f"[DEBUG] RAW LLM OUTPUT (first 500 chars):\n{raw[:500]}...")
-            raise ValueError(f"LLM did not return valid JSON: {e}")
+            # Try to repair truncated JSON
+            raw_fixed = _repair_json(raw)
+            try:
+                data = json.loads(raw_fixed)
+                print("[REPAIR] JSON repaired successfully")
+            except Exception:
+                raise ValueError(f"LLM did not return valid JSON: {e}")
 
         # Clear raw response from memory
         raw = None

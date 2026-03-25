@@ -37,14 +37,13 @@ class BeautifulSimpleSystem:
     # ─────────────────────────────────────────────
 
     def _title_slide(self, slide, slide_data, design_style):
-        from design_styles import get_design_style
+        from design_engine import get_design
         from theme_engine import hex_to_rgb
-        cfg = get_design_style(design_style)
+        cfg = get_design(design_style)
 
         cx = self.slide_width / 2
         cy = self.slide_height / 2
 
-        # Main title – centred
         w, h = Inches(10), Inches(2)
         shape = slide.shapes.add_textbox(cx - w/2, cy - h - Inches(0.3), w, h)
         tf = shape.text_frame
@@ -55,7 +54,7 @@ class BeautifulSimpleSystem:
         p.text = slide_data.get('title', 'Presentation Title')
         p.alignment = PP_ALIGN.CENTER
         run = p.runs[0]
-        run.font.name = 'Calibri Light'
+        run.font.name = cfg.get('font_title', 'Calibri Light')
         run.font.size = Pt(52)
         run.font.bold = False
         try:
@@ -63,7 +62,6 @@ class BeautifulSimpleSystem:
         except Exception:
             run.font.color.rgb = RGBColor(255, 255, 255)
 
-        # Subtitle / first bullet
         bullets = slide_data.get('bullets', [])
         if bullets:
             sw, sh = Inches(8), Inches(1)
@@ -74,7 +72,7 @@ class BeautifulSimpleSystem:
             sp.text = str(bullets[0]).lstrip('•').strip()
             sp.alignment = PP_ALIGN.CENTER
             sr = sp.runs[0]
-            sr.font.name = 'Calibri'
+            sr.font.name = cfg.get('font_body', 'Calibri')
             sr.font.size = Pt(22)
             try:
                 sr.font.color.rgb = hex_to_rgb(cfg['colors']['body'])
@@ -88,9 +86,9 @@ class BeautifulSimpleSystem:
     # ─────────────────────────────────────────────
 
     def _thankyou_slide(self, slide, slide_data, design_style):
-        from design_styles import get_design_style
+        from design_engine import get_design
         from theme_engine import hex_to_rgb
-        cfg = get_design_style(design_style)
+        cfg = get_design(design_style)
 
         cx = self.slide_width / 2
         cy = self.slide_height / 2
@@ -141,9 +139,9 @@ class BeautifulSimpleSystem:
     # ─────────────────────────────────────────────
 
     def _content_slide(self, slide, slide_data, design_style):
-        from design_styles import get_design_style
+        from design_engine import get_design
         from theme_engine import hex_to_rgb
-        cfg = get_design_style(design_style)
+        cfg = get_design(design_style)
 
         visual_type = slide_data.get('visual_type', 'none')
         has_visual   = visual_type not in ('none', None, '')
@@ -164,7 +162,7 @@ class BeautifulSimpleSystem:
         p.text = slide_data.get('title', '')
         p.alignment = PP_ALIGN.LEFT
         run = p.runs[0]
-        run.font.name = 'Calibri'
+        run.font.name = cfg.get('font_title', 'Calibri')
         run.font.size = Pt(30)
         run.font.bold = True
         try:
@@ -201,7 +199,7 @@ class BeautifulSimpleSystem:
             para.space_after = spacing
             para.line_spacing = 1.35
             brun = para.runs[0]
-            brun.font.name = 'Calibri'
+            brun.font.name = cfg.get('font_body', 'Calibri')
             brun.font.size = fsize
             brun.font.bold = False
             try:
