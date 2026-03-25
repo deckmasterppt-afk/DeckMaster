@@ -1,14 +1,7 @@
 import os
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.enum.shapes import MSO_SHAPE
-from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.dml.color import RGBColor
-from pptx.enum.dml import MSO_THEME_COLOR
-from design_enforcer import enforce_design
-from theme_engine import hex_to_rgb
-from slide_mapper import get_slide_layout
-from design_styles import get_design_style, apply_design_decorations
 from visual_elements import add_visual_elements_to_slide
 from performance_monitor import checkpoint
 import gc
@@ -113,24 +106,14 @@ def generate_ppt(slides: list, output_path: str, design_style: str = "minimal_1"
             # Create slide with proper layout
             slide = prs.slides.add_slide(prs.slide_layouts[SLIDE_LAYOUTS[slide_type]])
 
-            # Apply full design (background + decorative elements)
+            # Apply design (background + decorative elements)
             from design_engine import apply_design
             apply_design(slide, prs, design_style)
 
-            # BEAUTIFUL SIMPLE SYSTEM - handles all content and visual placement
+            # Beautiful Simple System handles ALL content and visual placement
             print(f"[BEAUTIFUL] Creating beautiful, uncluttered layout for slide {slide_index + 1}")
-            
-            # Add beautiful visual elements using the simple system
             add_visual_elements_to_slide(slide, slide_data, design_style, visual_preferences, prs, slide_index)
-            
-            # Apply perfect design decorations (minimal for clean look)
-            if slide_count <= 15:  # Only for manageable presentations
-                apply_design_decorations(slide, design_style, prs)
-            
-            # Enforce perfect design rules
-            layout_info = get_slide_layout(slide_type)
-            enforce_design(slide, layout_info)
-            
+
             # Memory cleanup every 5 slides
             if slide_index % 5 == 4:
                 _aggressive_cleanup()
