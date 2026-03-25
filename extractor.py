@@ -102,7 +102,7 @@ TASK: {task}
 SLIDES REQUIRED: {slide_count} slides (MUST generate exactly {slide_count} unique slides)
 
 CONTENT TO USE:
-{content[:4000]}
+{content[:3000]}
 
 CRITICAL REQUIREMENTS:
 1. FIRST SLIDE: Title slide only with just the main topic title (no bullets, no content)

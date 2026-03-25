@@ -3,11 +3,11 @@ import gc
 import json
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL = "qwen2.5:7b-instruct"
+MODEL = "phi4-mini:latest"  # Faster model - better for production
 
 def call_llm(prompt: str) -> str:
     """
-    Call Ollama LLM - simple and working
+    Call Ollama LLM with proper timeout for 7B model
     """
     payload = {
         "model": MODEL,
@@ -16,115 +16,111 @@ def call_llm(prompt: str) -> str:
         "options": {
             "temperature": 0.7,
             "top_p": 0.9,
-            "num_ctx": 2048,
-            "num_predict": 1024,
+            "num_ctx": 4096,
+            "num_predict": 1500,
             "repeat_penalty": 1.1
         }
     }
 
-    timeout = 30  # Reduced timeout - fall to demo mode faster
-    
     try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=(5, 30))  # (connect, read)
+        print(f"[LLM] Calling Ollama model: {MODEL}")
+        response = requests.post(
+            OLLAMA_URL,
+            json=payload,
+            timeout=(10, 300)  # 10s connect, 5min read - enough for 7B model
+        )
         response.raise_for_status()
 
         data = response.json()
         result = data.get("response", "").strip()
-        
-        # Force garbage collection after LLM call
+
+        if not result:
+            print("[LLM] Empty response from Ollama - using demo mode")
+            return generate_demo_response(prompt)
+
+        print(f"[LLM] Got {len(result)} chars from Ollama")
         gc.collect()
-        
         return result
-        
+
     except requests.exceptions.ConnectionError:
-        print("⚠️ Ollama not running - using demo mode")
+        print("[LLM] Ollama not reachable - using demo mode")
+        return generate_demo_response(prompt)
+    except requests.exceptions.Timeout:
+        print("[LLM] Ollama timed out - using demo mode")
         return generate_demo_response(prompt)
     except Exception as e:
-        print(f"⚠️ Ollama error: {e} - using demo mode")
+        print(f"[LLM] Error: {e} - using demo mode")
         return generate_demo_response(prompt)
 
+
 def generate_demo_response(prompt: str) -> str:
-    """Generate RICH demo response using extracted content from prompt"""
+    """Generate rich demo response when Ollama is unavailable"""
     import re
-    
-    # Extract slide count from prompt
+
+    # Extract slide count
     slide_match = re.search(r'(\d+)\s*slides?', prompt.lower())
     slide_count = int(slide_match.group(1)) if slide_match else 5
-    
-    # Extract topic from TASK line in prompt
-    topic = "Your Topic"
+
+    # Extract topic
+    topic = "Presentation"
     task_match = re.search(r'TASK:\s*([^\n]+)', prompt)
     if task_match:
         topic = task_match.group(1).strip()
-    
-    # Extract content from prompt for rich information
+
+    # Extract content from prompt
     content_match = re.search(r'CONTENT TO USE:\s*(.*?)(?=CRITICAL REQUIREMENTS|$)', prompt, re.DOTALL)
     extracted_content = content_match.group(1).strip() if content_match else ""
-    
-    # Parse content into meaningful sections
-    content_lines = [line.strip() for line in extracted_content.split('\n') if len(line.strip()) > 30]
-    
+    content_lines = [l.strip() for l in extracted_content.split('\n') if len(l.strip()) > 40]
+
     slides = []
-    
-    # FIRST SLIDE: Title slide only (no bullets, no visuals)
+
+    # Title slide
     slides.append({
         "slide_type": "title",
         "title": topic,
         "bullets": []
     })
-    
-    # Generate content slides with REAL information from extracted content
+
+    # Slide titles based on topic
+    slide_titles = [
+        f"Introduction to {topic}",
+        f"Key Concepts and Fundamentals",
+        f"Core Features and Benefits",
+        f"Implementation and Best Practices",
+        f"Real-World Applications",
+        f"Challenges and Solutions",
+        f"Future Trends and Opportunities",
+        f"Case Studies and Examples",
+        f"Strategic Recommendations",
+        f"Summary and Key Takeaways"
+    ]
+
     for i in range(1, slide_count):
-        slide_title = f"Key Aspects of {topic}" if i == 1 else f"Advanced Concepts in {topic}"
-        
-        # Use real content if available, otherwise generate contextual content
-        if content_lines and len(content_lines) >= 4:
-            # Use different sections of content for each slide
-            start_idx = ((i - 1) * 3) % len(content_lines)
-            slide_content = content_lines[start_idx:start_idx + 6]
-            
+        title = slide_titles[i - 1] if i - 1 < len(slide_titles) else f"Section {i}"
+
+        # Use real extracted content if available
+        if content_lines and len(content_lines) >= 3:
+            start = ((i - 1) * 4) % len(content_lines)
+            raw_bullets = content_lines[start:start + 5]
             bullets = []
-            for j, line in enumerate(slide_content[:6]):
-                if len(line) > 40:
-                    # Clean and format the line as a bullet point
-                    clean_line = line[:150] + "..." if len(line) > 150 else line
-                    if not clean_line.startswith('•'):
-                        clean_line = f"• {clean_line}"
-                    bullets.append(clean_line)
-            
-            # Ensure we have at least 4 bullets
+            for b in raw_bullets:
+                clean = b[:160] + "..." if len(b) > 160 else b
+                bullets.append(f"• {clean}" if not clean.startswith("•") else clean)
             while len(bullets) < 4:
-                bullets.append(f"• Additional insights and analysis related to {topic.lower()}")
-                
+                bullets.append(f"• Key insight related to {topic.lower()}")
         else:
-            # Fallback to contextual content
             bullets = [
-                f"• Comprehensive analysis of key factors and considerations in {topic.lower()}",
-                f"• Detailed implementation strategies with proven methodologies and best practices",
-                f"• Real-world examples and practical applications across various industry sectors",
-                f"• Statistical data showing measurable improvements and performance metrics",
-                f"• Expert recommendations based on extensive research, testing, and field studies"
+                f"• Comprehensive overview of {topic.lower()} with detailed analysis",
+                f"• Evidence-based strategies and proven methodologies for success",
+                f"• Real-world examples demonstrating practical applications",
+                f"• Data-driven insights showing measurable impact and results",
+                f"• Expert recommendations for effective implementation"
             ]
-        
-        # Generate unique slide titles based on content
-        if i == 1:
-            slide_title = f"Introduction to {topic}"
-        elif i == 2:
-            slide_title = f"Key Components and Features"
-        elif i == 3:
-            slide_title = f"Implementation and Best Practices"
-        elif i == 4:
-            slide_title = f"Benefits and Applications"
-        elif i == 5:
-            slide_title = f"Advanced Strategies and Methods"
-        else:
-            slide_title = f"Detailed Analysis - Part {i-5}"
-        
+
         slides.append({
             "slide_type": "content",
-            "title": slide_title,
-            "bullets": bullets[:6]  # Limit to 6 bullets max
+            "title": title,
+            "bullets": bullets[:5]
         })
-    
-    result = {"slides": slides}
-    return json.dumps(result, indent=2)
+
+    return json.dumps({"slides": slides}, indent=2)
