@@ -1003,7 +1003,7 @@
                     visual_preferences: visualElements
                 };
                 
-                console.log('🚀 PERFECT Generation Request:', requestData);
+                console.log('🚀 Generation Request:', requestData);
                 
                 // Start generation
                 elements.generateBtn.disabled = true;
@@ -1016,30 +1016,29 @@
                 showStatus(statusMsg, 'info');
                 
                 try {
-                    // Call the PERFECT API
+                    // Step 1: Start generation (returns immediately with job_id)
                     const response = await fetch('/api/generate', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(requestData)
                     });
                     
                     const result = await response.json();
                     
-                    if (result.success) {
-                        // PERFECT - generation completed immediately
-                        showStatus(`✅ Presentation generated successfully!`, 'success');
-                        
-                        // Get file information and show download
-                        showPerfectDownload(result.job_id);
-                        
-                        if (!adminActive) {
-                            currentUser.dailyUsage++;
-                            updateUI();
-                        }
-                    } else {
-                        showStatus(`❌ Generation failed: ${result.error}`, 'error');
+                    if (!result.success) {
+                        showStatus(`❌ ${result.error}`, 'error');
+                        return;
+                    }
+
+                    const jobId = result.job_id;
+                    showStatus(`⏳ Processing... (this may take up to ${result.estimated_time}s for ${slideCount} slides)`, 'info');
+
+                    // Step 2: Poll until DONE or FAILED
+                    await pollAndDownload(jobId, slideCount);
+
+                    if (!adminActive) {
+                        currentUser.dailyUsage++;
+                        updateUI();
                     }
                     
                 } catch (error) {
@@ -1050,6 +1049,65 @@
                     elements.generateBtn.textContent = 'Generate Presentation';
                 }
             });
+
+            // ── Poll job status until done, then trigger download ──────────
+            async function pollAndDownload(jobId, slideCount) {
+                const maxWait   = 600;   // 10 minutes max
+                const interval  = 3000;  // poll every 3 seconds
+                const maxPolls  = Math.ceil(maxWait * 1000 / interval);
+                const messages  = [
+                    '📝 Extracting content from URL...',
+                    '🤖 AI is writing your slides...',
+                    '🎨 Applying design and layout...',
+                    '📊 Adding visual elements...',
+                    '✨ Finalising your presentation...',
+                    '💾 Saving file...',
+                ];
+                let polls = 0;
+
+                while (polls < maxPolls) {
+                    await new Promise(r => setTimeout(r, interval));
+                    polls++;
+
+                    try {
+                        const res  = await fetch(`/api/job/${jobId}`);
+                        const data = await res.json();
+
+                        if (!data.success) continue;
+
+                        if (data.state === 'DONE') {
+                            showStatus('✅ Presentation ready! Starting download...', 'success');
+                            triggerDownload(jobId, data.filename);
+                            showPerfectDownload(jobId);
+                            return;
+                        }
+
+                        if (data.state === 'FAILED') {
+                            showStatus(`❌ Generation failed: ${data.error || 'Unknown error'}`, 'error');
+                            return;
+                        }
+
+                        // Still processing – show rotating message
+                        const msg = messages[Math.floor(polls / 2) % messages.length];
+                        showStatus(`${msg} (${polls * 3}s elapsed)`, 'info');
+
+                    } catch (e) {
+                        console.warn('Poll error:', e);
+                    }
+                }
+
+                showStatus('⚠️ Generation is taking longer than expected. Check back in a moment.', 'error');
+            }
+
+            // ── Trigger browser download directly ──────────────────────────
+            function triggerDownload(jobId, filename) {
+                const a = document.createElement('a');
+                a.href = `/api/download/${jobId}`;
+                a.download = filename || 'DeckMaster.pptx';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
             
             // PERFECT download display
             async function showPerfectDownload(jobId) {
