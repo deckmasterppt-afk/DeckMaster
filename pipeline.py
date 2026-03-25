@@ -71,7 +71,6 @@ def run_pipeline(url: str, task: str, design_style: str, visual_preferences: dic
         if "slides" not in data:
             raise ValueError("JSON missing 'slides' key")
 
-        # CRITICAL FIX: Intelligent slide limiting based on system resources
         slides = data["slides"]
         original_count = len(slides)
         
