@@ -148,67 +148,74 @@ class ChartService:
                 'title': 'Performance'
             }
     
-    def create_chart_image(self, chart_data, style='modern', size=(8, 6)):
-        """Create chart image using matplotlib"""
+    def create_chart_image(self, chart_data, style='modern', accent_hex=None, size=(8, 6)):
+        """Create chart image using matplotlib - design-aware colours"""
         try:
-            fig, ax = plt.subplots(figsize=size)
-            
-            # Set style based on design
-            if style == 'modern':
-                colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c']
-            elif style == 'corporate':
-                colors = ['#2c3e50', '#34495e', '#7f8c8d', '#95a5a6', '#bdc3c7', '#ecf0f1']
+            # Build colour palette from design accent
+            if accent_hex:
+                h = accent_hex.lstrip('#')
+                ar, ag, ab = int(h[0:2],16)/255, int(h[2:4],16)/255, int(h[4:6],16)/255
+                # Generate 6 shades from accent
+                import colorsys
+                hue, sat, val = colorsys.rgb_to_hsv(ar, ag, ab)
+                colors = [colorsys.hsv_to_rgb(hue, max(0.2, sat - i*0.12),
+                          min(1.0, val + i*0.08)) for i in range(6)]
+            elif style == 'dark':
+                colors = ['#00F5FF','#39FF14','#E040FB','#F59E0B','#FF6B6B','#4DB6AC']
             else:
-                colors = plt.cm.Set3(np.linspace(0, 1, 6))
-            
+                colors = ['#4361EE','#E94560','#2ecc71','#f39c12','#9b59b6','#1abc9c']
+
+            # Background
+            bg_color = '#1a1a2e' if style == 'dark' else '#ffffff'
+            text_color = '#ffffff' if style == 'dark' else '#1a1a2e'
+
+            fig, ax = plt.subplots(figsize=size)
+            fig.patch.set_facecolor(bg_color)
+            ax.set_facecolor(bg_color)
+
             chart_type = chart_data['type']
-            
+
             if chart_type == 'bar':
-                bars = ax.bar(chart_data['categories'], chart_data['values'], color=colors)
-                ax.set_ylabel('Values')
-                
-                # Add value labels on bars
+                bars = ax.bar(chart_data['categories'], chart_data['values'],
+                              color=colors, edgecolor='none')
+                ax.set_ylabel('Values', color=text_color)
                 for bar in bars:
                     height = bar.get_height()
-                    ax.text(bar.get_x() + bar.get_width()/2., height + 1,
-                           f'{int(height)}', ha='center', va='bottom')
-                
+                    ax.text(bar.get_x() + bar.get_width()/2., height + 0.5,
+                            f'{int(height)}', ha='center', va='bottom',
+                            color=text_color, fontsize=9)
+
             elif chart_type == 'line':
-                ax.plot(chart_data['x_data'], chart_data['y_data'], 
-                       marker='o', linewidth=3, markersize=8, color=colors[0])
-                ax.set_ylabel('Values')
-                ax.grid(True, alpha=0.3)
-                
+                ax.plot(chart_data['x_data'], chart_data['y_data'],
+                        marker='o', linewidth=2.5, markersize=7, color=colors[0])
+                ax.set_ylabel('Values', color=text_color)
+                ax.grid(True, alpha=0.2, color=text_color)
+
             elif chart_type == 'pie':
-                wedges, texts, autotexts = ax.pie(chart_data['sizes'], 
-                                                 labels=chart_data['labels'],
-                                                 colors=colors,
-                                                 autopct='%1.1f%%',
-                                                 startangle=90)
+                wedges, texts, autotexts = ax.pie(
+                    chart_data['sizes'], labels=chart_data['labels'],
+                    colors=colors, autopct='%1.1f%%', startangle=90,
+                    textprops={'color': text_color})
+                for at in autotexts:
+                    at.set_color(text_color)
                 ax.axis('equal')
-                
-            elif chart_type == 'scatter':
-                ax.scatter(chart_data['x_data'], chart_data['y_data'], 
-                          c=colors[0], alpha=0.7, s=60)
-                ax.set_xlabel('X Values')
-                ax.set_ylabel('Y Values')
-                ax.grid(True, alpha=0.3)
-            
-            # Set title
-            ax.set_title(chart_data['title'], fontsize=14, fontweight='bold', pad=20)
-            
-            # Improve layout
+
+            # Axis styling
+            ax.tick_params(colors=text_color)
+            for spine in ax.spines.values():
+                spine.set_edgecolor(text_color)
+                spine.set_alpha(0.3)
+            ax.set_title(chart_data['title'], fontsize=13, fontweight='bold',
+                         pad=15, color=text_color)
+
             plt.tight_layout()
-            
-            # Save to bytes
             img_buffer = io.BytesIO()
-            plt.savefig(img_buffer, format='PNG', dpi=150, bbox_inches='tight')
+            plt.savefig(img_buffer, format='PNG', dpi=150, bbox_inches='tight',
+                        facecolor=bg_color)
             img_buffer.seek(0)
-            
-            plt.close(fig)  # Clean up
-            
+            plt.close(fig)
             return img_buffer.getvalue()
-            
+
         except Exception as e:
             print(f"[CHART_CREATE] Error: {e}")
             return None
@@ -298,84 +305,63 @@ class ChartService:
             }
             return pd.DataFrame(data)
     
-    def create_table_image(self, df, style='modern', size=(8, 5)):
-        """Create beautiful, professional table image using matplotlib"""
+    def create_table_image(self, df, style='modern', accent_hex=None, size=(8, 5)):
+        """Create table image - design-aware colours"""
         try:
-            # Create figure with better proportions for slide
             fig, ax = plt.subplots(figsize=size)
             ax.axis('tight')
             ax.axis('off')
-            
-            # Limit table size for better readability
+
             if len(df) > 6:
-                df = df.head(6)  # Max 6 rows for readability
-            
-            # Create table with better styling
-            table = ax.table(cellText=df.values,
-                           colLabels=df.columns,
-                           cellLoc='center',
-                           loc='center',
-                           bbox=[0, 0, 1, 1])  # Full figure
-            
-            # IMPROVED: Better table styling
-            table.auto_set_font_size(False)
-            table.set_fontsize(11)  # Readable font size
-            table.scale(1, 2.2)  # Better row height
-            
-            # Professional color scheme based on style
-            if style == 'modern':
-                header_color = '#2c3e50'  # Dark blue-gray
-                alt_color1 = '#ecf0f1'    # Light gray
-                alt_color2 = '#ffffff'    # White
-                text_color = '#2c3e50'    # Dark text
-            elif style == 'corporate':
-                header_color = '#1e3a8a'  # Corporate blue
-                alt_color1 = '#f1f5f9'    # Very light blue
-                alt_color2 = '#ffffff'    # White
-                text_color = '#1e3a8a'    # Corporate blue text
+                df = df.head(6)
+
+            # Derive colours from accent or style
+            if accent_hex:
+                header_color = accent_hex
+                # Light tint for alternating rows
+                h = accent_hex.lstrip('#')
+                r, g, b = int(h[0:2],16), int(h[2:4],16), int(h[4:6],16)
+                alt_color1 = f'#{min(r+40,255):02x}{min(g+40,255):02x}{min(b+40,255):02x}'
+                alt_color2 = '#ffffff'
+                text_color = '#ffffff'
+                body_text  = '#1a1a2e' if style != 'dark' else '#e0e0e0'
+            elif style == 'dark':
+                header_color = '#00F5FF'; alt_color1 = '#1e293b'
+                alt_color2   = '#0f172a'; text_color = '#ffffff'; body_text = '#cbd5e1'
             else:
-                header_color = '#374151'  # Dark gray
-                alt_color1 = '#f9fafb'    # Very light gray
-                alt_color2 = '#ffffff'    # White
-                text_color = '#374151'    # Dark gray text
-            
-            # Style header row
+                header_color = '#4361EE'; alt_color1 = '#f0f4ff'
+                alt_color2   = '#ffffff'; text_color = '#ffffff'; body_text = '#1a1a2e'
+
+            bg = '#1a1a2e' if style == 'dark' else '#ffffff'
+            fig.patch.set_facecolor(bg)
+
+            table = ax.table(cellText=df.values, colLabels=df.columns,
+                             cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
+            table.auto_set_font_size(False)
+            table.set_fontsize(11)
+            table.scale(1, 2.2)
+
             for i in range(len(df.columns)):
                 cell = table[(0, i)]
                 cell.set_facecolor(header_color)
-                cell.set_text_props(weight='bold', color='white', size=12)
-                cell.set_height(0.15)  # Header height
-            
-            # Style data rows with alternating colors
+                cell.set_text_props(weight='bold', color=text_color, size=12)
+                cell.set_height(0.15)
+
             for i in range(1, len(df) + 1):
                 for j in range(len(df.columns)):
                     cell = table[(i, j)]
-                    # Alternate row colors for better readability
-                    color = alt_color1 if i % 2 == 1 else alt_color2
-                    cell.set_facecolor(color)
-                    cell.set_text_props(color=text_color, size=10)
-                    cell.set_height(0.12)  # Data row height
-                    
-                    # Add subtle border
+                    cell.set_facecolor(alt_color1 if i % 2 == 1 else alt_color2)
+                    cell.set_text_props(color=body_text, size=10)
+                    cell.set_height(0.12)
                     cell.set_edgecolor('#d1d5db')
                     cell.set_linewidth(0.5)
-            
-            # Add title if DataFrame has a name
-            if hasattr(df, 'name') and df.name:
-                plt.title(df.name, fontsize=14, fontweight='bold', pad=15, color=text_color)
-            
-            # Improve layout
+
             plt.tight_layout()
-            plt.subplots_adjust(top=0.9, bottom=0.1, left=0.1, right=0.9)
-            
-            # Save to bytes with high quality
             img_buffer = io.BytesIO()
-            plt.savefig(img_buffer, format='PNG', dpi=200, bbox_inches='tight', 
-                       facecolor='white', edgecolor='none')
+            plt.savefig(img_buffer, format='PNG', dpi=200, bbox_inches='tight',
+                        facecolor=bg, edgecolor='none')
             img_buffer.seek(0)
-            
-            plt.close(fig)  # Clean up
-            
+            plt.close(fig)
             print(f"[TABLE_IMAGE] Created professional table with {len(df)} rows, {len(df.columns)} columns")
             
             return img_buffer.getvalue()
